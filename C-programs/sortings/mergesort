@@ -1,0 +1,57 @@
+#include<stdio.h>
+#include<stdlib.h>
+void merge(int * arr, int left, int mid, int right);
+void merge_sort(int * arr, int left, int right);
+void merge_sort_without_recursion(int * arr, int n);
+
+int main(){
+    int n;
+    scanf("%d", &n);
+    int arr[n];
+    for ( int i = 0; i < n; i++ ) scanf("%d", &arr[i]);
+    // merge_sort(arr, 0, n-1);
+    merge_sort_without_recursion(arr, n);
+    for ( int i = 0; i < n; i++ ) printf("%d ", arr[i]);
+    return 0;
+}
+
+void merge(int * arr, int left, int mid, int right)
+{
+    int len1 = mid - left + 1, len2 = right - mid;
+    int arr1[len1], arr2[len2];
+    for ( int i = 0; i < len1; i++ ) arr1[i] = arr[left+i];
+    for ( int i = 0; i < len2; i++ ) arr2[i] = arr[mid+i+1];
+    int p1 = 0, p2 = 0, p = 0;
+    for ( int i = left; i <= right; i++ ) {
+        if ( p1 == len1 ) {
+            while ( p2 < len2 ) arr[i++] = arr2[p2++];
+            break;
+        }
+        if ( p2 == len2 ) {
+            while ( p1 < len1 ) arr[i++] = arr1[p1++];
+            break;
+        }
+        arr[i] = ( arr1[p1] < arr2[p2] ) ? ( arr1[p1++] ) : ( arr2[p2++] );
+    }
+    return;
+}
+
+void merge_sort(int * arr, int left, int right)
+{
+    if ( left >= right ) return;
+    int mid = ( left + right ) / 2;
+    merge_sort(arr, left, mid);
+    merge_sort(arr, mid+1, right);
+    merge(arr, left, mid, right);
+    return;
+}
+
+void merge_sort_without_recursion(int * arr, int n)
+{
+    int LEN = n;
+    for ( int len = 1, i; len <= LEN; len *= 2 ) {
+        for ( i = 0; i < LEN - 2 * len; i += 2 * len ) merge(arr, i, i + len - 1, i + 2 * len - 1);
+        if ( i + len < LEN ) merge(arr, i, i + len - 1, i + 2 * len- 1);
+    }
+    return;
+}
